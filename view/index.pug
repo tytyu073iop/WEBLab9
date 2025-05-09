@@ -1,0 +1,16 @@
+doctype html
+head 
+    title Операции с цветами
+    script(src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous")
+    script(defer, src="public/script.js") 
+body 
+    div
+        input(type="button", onclick="Add()", value="Добавить информацию о растении")
+        input(type="button" onclick="Clear()" value="Удалить всю сохранённую информацию")
+    div
+        input(type="checkbox" id="sort" onclick="sortByName()")
+        label(for="sort") Сортировать по названию
+        br
+        input(type="search" placeholder="Найти" id="find")
+        input(type="button" value="Поиск" onclick="find()")
+    .dataTable
