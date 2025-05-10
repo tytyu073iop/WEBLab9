@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import { ajax } from 'rxjs/ajax';
 
 let curp = 1;
 let mp = 1;
@@ -5,7 +7,7 @@ let mp = 1;
 function ShowTable(dataHash) {
     let html = "";
     html += "<table><tr><th>Растение</th><th>Как за ним ухаживать</th><th>Управление</th></tr>";
-    for (key in dataHash) {
+    for (const key in dataHash) {
         html += `<tr><td>${key}</td><td>${dataHash[key]}</td><td><input type="button" value="Изменить способ содержания" onClick="UpdateCare('${key}')"><input type="button" value="Удалить" onClick="Delete('${key}')"><td>`;
     }
     html += "</table>"
@@ -55,6 +57,7 @@ async function Add() {
     alert(answer);
     updateTable();
 }
+window.Add = Add;
 
 async function Delete(plant) {
     
@@ -76,6 +79,7 @@ async function Delete(plant) {
     alert(answer);
     updateTable();
 }
+window.Delete = Delete;
 
 async function GetValue() {
     let plant = prompt("plant: ");
@@ -197,38 +201,20 @@ async function UpdateCare(plant) {
     alert(answer);
     updateTable();
 }
+window.UpdateCare = UpdateCare;
 
 async function switchPage(page) {
     const toSort = $("#sort")[0].checked;
     const template = $("#find").val();
-    const response = await fetch(`http://localhost:3000/plant/pagemode/${page}?sort=${toSort}&template=${template}`, {
-        method: "GET"
+    
+    const obs = ajax.getJSON(`http://localhost:3000/plant/pagemode/${page}?sort=${toSort}&template=${template}`);
+    obs.subscribe(result => {
+        curp = result['pagenum'];
+        mp = result['maxPages'];
+        ShowTable(result['hash']);
     });
-    
-    let answer = ""
-    
-    switch(response.status) {
-        case 200:
-        break;
-        case 400:
-        answer = "The plant does not exist";
-        break;
-        default:
-        answer = `IDK, code is ${response.status}`;
-        break;
-    }
-    
-    if (answer !== "") {
-        alert (answer);
-        return;
-    }
-    
-    const result = await response.json();
-
-    curp = result['pagenum'];
-    mp = result['maxPages'];
-    ShowTable(result['hash']);
 }
+window.switchPage = switchPage;
 
 function updateTable() {
     switchPage(curp);
@@ -240,8 +226,10 @@ function sortByName() {
     curp = 1;
     updateTable();
 }
+window.sortByName = sortByName;
 
 function find() {
     curp = 1;
     updateTable();
 }
+window.find = find;
